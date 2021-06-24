@@ -15,8 +15,40 @@ _Hint:_
 
 ## What will you learn?
 
-1. Solidity Security Consideration
-2. **Underflow** and **Overflow** in use of unsigned integers
+1. How to count gas
+
+   In Ethereum, computations cost money. This is calculated by `gas * gas price`, where `gas` is a unit of computation and `gas price` scales with the load on Ethereum network. The transaction sender needs to pay the resulting ethers for every transaction she/it invokes.
+   
+   > Complex transactions (like contract creation) costs more than easier transactions (like sending someone some Ethers). Storing data to the blockchain costs more than reading the data, and reading constant variables [costs less](https://github.com/maAPPsDEV/privacy-attack) than reading storage values.
+   
+   Specifically, `gas` is assigned at the assembly level, i.e. each time an operation happens on the call stack. For example, these are arithmetic operations and their current gas costs, from the [Ethereum Yellow Paper](https://ethereum.github.io/yellowpaper/paper.pdf) (Appendix H):
+   
+   ![gas1](https://user-images.githubusercontent.com/78368735/123290733-e3d73d80-d4e7-11eb-856e-7e3de9759940.png)
+   
+   **Tip**: Use [Remix](http://remix.ethereum.org/) to play `gas`
+   
+   **Important to know**
+   
+   Different Solidity **compiler versions** will calculate gas differently. And whether or not **optimization** is enabled will also affect gas usage. Try changing the compiler defaults in Settings tab to see how remaining gas will change.
+   
+   Before starting this game, make sure you have configured Remix to the correct compiler version.
+   
+2. Datatype conversions
+   
+   The second piece of knowledge you need to solve this level is around data conversions. Whenever you convert a datapoint with larger storage space into a smaller one, you will lose and corrupt your data.
+   
+   ![gas2](https://user-images.githubusercontent.com/78368735/123291305-5cd69500-d4e8-11eb-9bab-4fcd25cf95d0.png)
+
+3. Byte masking
+   
+   Conversely, if you want to intentionally achieve the above result, you can perform byte masking. Solidity allows such bitwise operations for bytes and ints as follows:
+
+```
+bytes4 a = 0xffffffff;
+bytes4 mask = 0xf0f0f0f0;
+bytes4 result = a & mask ;   // 0xf0f0f0f0
+```
+
 
 ## What is the most difficult challenge?
 
