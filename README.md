@@ -52,19 +52,41 @@ bytes4 result = a & mask ;   // 0xf0f0f0f0
 
 ## What is the most difficult challenge?
 
-**You won't get success to attack if the target contract has been complied in Solidity 0.8.0 or uppper** 🤔
+1. Pass Gate 1
+   
+   Similar to [Telephone](https://github.com/maAPPsDEV/telephone-attack), you can pass Gate 1 by simply letting your contract be the middleman.
 
-> [**Solidity v0.8.0 Breaking Changes**](https://docs.soliditylang.org/en/v0.8.5/080-breaking-changes.html?highlight=underflow#silent-changes-of-the-semantics)
->
-> Arithmetic operations revert on **underflow** and **overflow**. You can use `unchecked { ... }` to use the previous wrapping behaviour.
->
-> Checks for overflow are very common, so we made them the default to increase readability of code, even if it comes at a slight increase of gas costs.
+2. Pass Gate 3
+   
+   Gate 3 takes in an 8 byte key, and has the following requirements:
+   
+```
+require(uint32(_gateKey) == uint16(_gateKey));
+require(uint32(_gateKey) != uint64(_gateKey));
+require(uint32(_gateKey) == uint16(tx.origin));
+```
+   This means that the integer key, when converted into various byte sizes, need to fulfil the following properties:
+   
+   - `0x11111111 == 0x1111`, which is only possible if the value is masked by `0x0000FFFF`
+   - `0x1111111100001111 != 0x00001111`, which is only possible if you keep the preceding values, with the mask `0xFFFFFFFF0000FFFF`
+   
+   Calculate the key using the `0xFFFFFFFF0000FFFF` mask:
 
-I had tried to do everything in Solidity 0.8.5 at first time, but it didn't work, as it reverted transactions everytime it met underflow.
+```
+bytes8 key = bytes8(tx.origin) & 0xFFFFFFFF0000FFFF;
+```
 
-Finally, I found that Solidity included those checks by defaults while using sliencely more gas.
+3. Pass Gate 2
+   
+   Finally, to pass Gate 2’s `require(msg.gas % 8191 == 0)`, you have to ensure that your remaining gas is an integer multiple of `8191`, at the particular moment when `msg.gas % 8191` is executed in the call stack.
 
-So, don't you need to use [`SafeMath`](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/math/SafeMath.sol)?
+## Security Considerations
+
+- Abstain from asserting gas consumption in your smart contracts, as different compiler settings will yield different results.
+- Be careful about data corruption when converting data types into different sizes.
+- **Save gas** by not storing unnecessary values. Pushing a value to state `MSTORE`, `MLOAD` is always less gas intensive than store values to the blockchain with `SSTORE`, `SLOAD`
+- **Save gas** by using appropriate modifiers to get functions calls for free, i.e. `external pure` or `external view` function calls are free!
+- **Save gas** by masking values (less operations), rather than typecasting
 
 ## Source Code
 
