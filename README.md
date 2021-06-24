@@ -1,18 +1,17 @@
-# Solidity Game - [Game Title] Attack
+# Solidity Game - Gatekeeper Attack
 
-_Inspired by OpenZeppelin's [Ethernaut](https://ethernaut.openzeppelin.com), [Game Title] Level_
+_Inspired by OpenZeppelin's [Ethernaut](https://ethernaut.openzeppelin.com), Gatekeeper One Level_
 
 ⚠️Do not try on mainnet!
 
 ## Task
 
-Hacker the basic token contract below.
-
-1. You are given 20 tokens to start with and you will beat the game if you somehow manage to get your hands on any additional tokens. Preferably a very large amount of tokens.
+Make it past the gatekeeper and register as an entrant.
 
 _Hint:_
 
-1. What is an odometer?
+1. Remember what you've learned from the [Telephone](https://github.com/maAPPsDEV/telephone-attack) and [Token](https://github.com/maAPPsDEV/token-attack) games.
+2. You can learn more about the special function `gasleft()`, in Solidity's documentation (see [here](https://docs.soliditylang.org/en/v0.8.3/units-and-global-variables.html) and [here](https://docs.soliditylang.org/en/v0.8.3/control-structures.html#external-function-calls)).
 
 ## What will you learn?
 
